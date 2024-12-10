@@ -41,7 +41,7 @@ for(i = 0; i < size; i++) {
   printf("Employee name: %s\n", e[i].name);
   printf("Joining date: %s\n", e[i].join_date);
   printf("Tenure: %d years\n", t);
-  printf("\n")
+  printf("\n");
   }
 }
 
