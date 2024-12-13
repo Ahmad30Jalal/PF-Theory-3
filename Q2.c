@@ -1,95 +1,69 @@
 #include <stdio.h>
-#include <string.h>
 
-#define BALLS 12
-
-// Structure for Player
 typedef struct {
-    int ball_scores[BALLS];
-    char player_name[50];
-    int total_score;
+    int score[12];
+    char name[30];
+    int total;
 } Player;
 
-// Function declarations
-void play_game(Player *player);
-int is_valid_score(int score);
-void determine_winner(Player player1, Player player2);
-void display_scoreboard(Player player1, Player player2);
+Player Play(Player p) {
+    for (int i = 0; i < 12; i++) {
+        printf("%s (ball %d score): ", p.name, i + 1);
+        scanf("%d", &p.score[i]);
+        if (p.score[i] < 0 || p.score[i] > 6) {
+            printf("Invalid score.Ball missed\n");
+            
+        }
+    }
+    return p;
+}
+
+void winner(Player p1, Player p2) {
+    p1.total = 0;
+    p2.total = 0;
+
+    for (int i = 0; i < 12; i++) {
+        p1.total += p1.score[i];
+        p2.total += p2.score[i];
+    }
+
+    printf("\nFinal Scores:\n");
+    printf("%s Total: %d\n", p1.name, p1.total);
+    printf("%s Total: %d\n", p2.name, p2.total);
+
+    if (p1.total > p2.total) {
+        printf("%s is the winner!\n", p1.name);
+    } else if (p2.total > p1.total) {
+        printf("%s is the winner!\n", p2.name);
+    } else {
+        printf("It's a tie!\n");
+    }
+}
+
+void display(Player p1, Player p2) {
+    printf("\nEach Ball's Scores:\n");
+    for (int i = 0; i < 12; i++) {
+        printf("Ball %d:\n", i + 1);
+        printf("  %s Score: %d\n", p1.name, p1.score[i]);
+        printf("  %s Score: %d\n", p2.name, p2.score[i]);
+    }
+}
 
 int main() {
-    Player player1 = {{0}, "", 0};
-    Player player2 = {{0}, "", 0};
+    Player p1, p2;
 
-    printf("Enter Player 1's name: ");
-    fgets(player1.player_name, sizeof(player1.player_name), stdin);
-    player1.player_name[strcspn(player1.player_name, "\n")] = 0; // Remove newline
+    printf("Enter Player 1 Name: ");
+    scanf("%s", p1.name);
+    printf("Enter Player 2 Name: ");
+    scanf("%s", p2.name);
 
-    printf("Enter Player 2's name: ");
-    fgets(player2.player_name, sizeof(player2.player_name), stdin);
-    player2.player_name[strcspn(player2.player_name, "\n")] = 0; // Remove newline
+    p1 = Play(p1);
+    p2 = Play(p2);
 
-    // Play game for both players
-    printf("\n--- %s's Turn ---\n", player1.player_name);
-    play_game(&player1);
+    // Display the winner
+    winner(p1, p2);
 
-    printf("\n--- %s's Turn ---\n", player2.player_name);
-    play_game(&player2);
-
-    // Display scoreboard and determine winner
-    printf("\n--- Match Scoreboard ---\n");
-    display_scoreboard(player1, player2);
-
-    determine_winner(player1, player2);
+    display(p1, p2);
 
     return 0;
-}
-
-// Function to play the game for a player
-void play_game(Player *player) {
-    for (int i = 0; i < BALLS; i++) {
-        int score;
-        printf("Enter score for ball %d: ", i + 1);
-        scanf("%d", &score);
-
-        if (is_valid_score(score)) {
-            player->ball_scores[i] = score;
-            player->total_score += score;
-        } else {
-            printf("Invalid score! Marking ball %d as 0.\n", i + 1);
-            player->ball_scores[i] = 0;
-        }
-    }
-}
-
-// Function to check if the score is valid
-int is_valid_score(int score) {
-    return score >= 0 && score <= 6;
-}
-
-// Function to determine the winner
-void determine_winner(Player player1, Player player2) {
-    if (player1.total_score > player2.total_score) {
-        printf("\nWinner: %s with %d runs!\n", player1.player_name, player1.total_score);
-    } else if (player2.total_score > player1.total_score) {
-        printf("\nWinner: %s with %d runs!\n", player2.player_name, player2.total_score);
-    } else {
-        printf("\nIt's a tie! Both players scored %d runs.\n", player1.total_score);
-    }
-}
-
-// Function to display the scoreboard
-void display_scoreboard(Player player1, Player player2) {
-    Player players[2] = {player1, player2};
-
-    for (int i = 0; i < 2; i++) {
-        Player player = players[i];
-        printf("\n%s's Performance:\n", player.player_name);
-        printf("Ball Scores: ");
-        for (int j = 0; j < BALLS; j++) {
-            printf("%d ", player.ball_scores[j]);
-        }
-        double average = player.total_score / (double)BALLS;
-        printf("\nTotal Score: %d", player.total_score);
-        printf("\nAverage Score: %.2f\n", average);
-    }
 }
